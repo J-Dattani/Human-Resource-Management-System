@@ -1,28 +1,18 @@
 <?php
 session_start();
-if ($_SESSION['role'] !== 'Admin') {
+if($_SESSION['role'] !== 'Admin'){
     header("Location: ../login.php");
     exit;
 }
-
 include("../config/db.php");
 
-/* ✅ RUN UPDATE ONLY WHEN FORM IS SUBMITTED */
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    if (isset($_POST['leave_id']) && isset($_POST['status'])) {
-        $leave_id = $_POST['leave_id'];
-        $status   = $_POST['status'];
-
-        mysqli_query(
-            $conn,
-            "UPDATE leave_requests SET status='$status' WHERE leave_id=$leave_id"
-        );
-    }
+if(isset($_POST['leave_id'])){
+    $id = $_POST['leave_id'];
+    $status = $_POST['status'];
+    mysqli_query($conn,"UPDATE leave_requests SET status='$status' WHERE leave_id=$id");
 }
 
-/* FETCH ALL LEAVES */
-$leaves = mysqli_query($conn, "
+$leaves = mysqli_query($conn,"
     SELECT l.leave_id, e.first_name, e.last_name,
            l.from_date, l.to_date, l.status
     FROM leave_requests l
@@ -34,7 +24,7 @@ $leaves = mysqli_query($conn, "
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Approve Leave</title>
+    <title>Leave Requests</title>
 </head>
 <body>
 
@@ -49,33 +39,29 @@ $leaves = mysqli_query($conn, "
     <th>Action</th>
 </tr>
 
-<?php while ($row = mysqli_fetch_assoc($leaves)) { ?>
+<?php while($row = mysqli_fetch_assoc($leaves)) { ?>
 <tr>
-    <td><?= $row['first_name'] . " " . $row['last_name'] ?></td>
+    <td><?= $row['first_name']." ".$row['last_name'] ?></td>
     <td><?= $row['from_date'] ?></td>
     <td><?= $row['to_date'] ?></td>
     <td><?= $row['status'] ?></td>
     <td>
-        <?php if ($row['status'] == 'Pending') { ?>
         <form method="POST" style="display:inline">
             <input type="hidden" name="leave_id" value="<?= $row['leave_id'] ?>">
             <input type="hidden" name="status" value="Approved">
-            <button type="submit">Approve</button>
+            <button>Approve</button>
         </form>
-
         <form method="POST" style="display:inline">
             <input type="hidden" name="leave_id" value="<?= $row['leave_id'] ?>">
             <input type="hidden" name="status" value="Rejected">
-            <button type="submit">Reject</button>
+            <button>Reject</button>
         </form>
-        <?php } else { echo "—"; } ?>
     </td>
 </tr>
 <?php } ?>
 
 </table>
 
-<br>
 <a href="dashboard.php">Back</a>
 
 </body>

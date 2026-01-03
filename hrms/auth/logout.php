@@ -1,3 +1,5 @@
 <?php
-// logout.php
-// Paste your logout logic here.
+session_start();
+session_destroy();
+header("Location: ../index.php");
+?>

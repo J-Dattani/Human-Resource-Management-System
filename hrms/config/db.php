@@ -1,3 +1,7 @@
 <?php
-// db.php
-// Paste your database connection config here.
+$conn = mysqli_connect("localhost", "root", "", "HRMS");
+
+if (!$conn) {
+    die("DB Connection Failed");
+}
+?>
