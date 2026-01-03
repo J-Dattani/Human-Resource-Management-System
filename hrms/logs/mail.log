@@ -1,2 +1,140 @@
 [2026-01-03T05:06:50+00:00] [HRMS MAIL] Sent OK to: work.jdattani@gmail.com | subject: HRMS Smoke Test
 [2026-01-03T05:29:57+00:00] [HRMS MAIL] Sent OK to: work.jdattani@gmail.com | subject: Welcome to HRMS
+[2026-01-03T10:47:52+01:00] [HRMS MAIL] Sent OK to: ruchitdoshi62@gmail.com | subject: Welcome to Dayflow HRMS
+[2026-01-03T10:50:14+01:00] [HRMS MAIL] Sent OK to: ruchit.coding@gmail.com | subject: New Leave Request - 2026-01-03
+[2026-01-03T10:55:04+01:00] [HRMS MAIL] Sent OK to: ruchit.coding@gmail.com | subject: New Leave Request - 2026-01-08
+[2026-01-03T10:55:09+01:00] [HRMS MAIL] Sent OK to: ruchit.coding@gmail.com | subject: New Leave Request - 2026-01-08
+[2026-01-03T11:56:48+01:00] [HRMS MAIL] Failed to send | subject: Verify Your Email - Dayflow HRMS | error: SMTP Error: Could not authenticate.
+[2026-01-03T11:57:31+01:00] [HRMS MAIL] Failed to send | subject: Verify Your Email - Dayflow HRMS | error: SMTP Error: Could not authenticate.
+[2026-01-03T12:00:22+01:00] [HRMS MAIL] Failed to send | subject: Verify Your Email - Dayflow HRMS | error: SMTP Error: Could not authenticate.
+[2026-01-03T12:16:35+01:00] [HRMS MAIL] Failed to send | subject: Verify Your Email - Dayflow HRMS | error: SMTP Error: Could not authenticate.
+[2026-01-03T12:16:56+01:00] [HRMS MAIL] Failed to send | subject: Verify Your Email - Dayflow HRMS | error: SMTP Error: Could not authenticate.
+[2026-01-03T12:19:32+01:00] [HRMS MAIL] Failed to send | subject: New Leave Request - 2026-01-03 | error: SMTP Error: Could not authenticate.
+[2026-01-03T12:21:25+01:00] [HRMS MAIL] Failed to send | subject: Leave Request Approved - Dayflow HRMS | error: SMTP Error: Could not authenticate.
+[2026-01-03T12:26:11+01:00] [HRMS MAIL DEBUG][2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 98e67ed59e1d1-34f4503a764sm1010259a91.1 - gsmtp
+
+[2026-01-03T12:26:11+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: EHLO localhost
+
+[2026-01-03T12:26:12+01:00] [HRMS MAIL DEBUG][2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [119.160.199.91]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2026-01-03T12:26:12+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: STARTTLS
+
+[2026-01-03T12:26:12+01:00] [HRMS MAIL DEBUG][2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2026-01-03T12:26:12+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: EHLO localhost
+
+[2026-01-03T12:26:13+01:00] [HRMS MAIL DEBUG][2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [119.160.199.91]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2026-01-03T12:26:13+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: AUTH LOGIN
+
+[2026-01-03T12:26:13+01:00] [HRMS MAIL DEBUG][2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2026-01-03T12:26:13+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: [credentials hidden]
+[2026-01-03T12:26:13+01:00] [HRMS MAIL DEBUG][2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2026-01-03T12:26:13+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: [credentials hidden]
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: MAIL FROM:<ruchitdoshi62@gmail.com>
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][2] SERVER -> CLIENT: 250 2.1.0 OK 98e67ed59e1d1-34f4503a764sm1010259a91.1 - gsmtp
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: RCPT TO:<ruchitdoshi98@gmail.com>
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][2] SERVER -> CLIENT: 250 2.1.5 OK 98e67ed59e1d1-34f4503a764sm1010259a91.1 - gsmtp
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: DATA
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][2] SERVER -> CLIENT: 354 Go ahead 98e67ed59e1d1-34f4503a764sm1010259a91.1 - gsmtp
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: Date: Sat, 3 Jan 2026 12:26:11 +0100
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: To: ruchitdoshi98@gmail.com
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: From: Dayflow HRMS <ruchitdoshi62@gmail.com>
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: Subject: Verify Your Email - Dayflow HRMS
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: Message-ID: <7SCDy3IAWCLx3TbTEDJqQpMRFZDifU2JlTJKvTKfOVY@localhost>
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: X-Mailer: PHPMailer 7.0.1 (https://github.com/PHPMailer/PHPMailer)
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: Content-Type: multipart/alternative;
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER:  boundary="b1=_7SCDy3IAWCLx3TbTEDJqQpMRFZDifU2JlTJKvTKfOVY"
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: 
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: --b1=_7SCDy3IAWCLx3TbTEDJqQpMRFZDifU2JlTJKvTKfOVY
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: Content-Type: text/plain; charset=us-ascii
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: 
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: Verify Your Email
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER:                          Hi ,
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER:                          Thank you for signing up. Please use the OTP below to verify your email address and activate your account.
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER:                          893456
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER:                          This code expires in 10 minutes.
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER:                          Or click here: Verify Account
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: 
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: --b1=_7SCDy3IAWCLx3TbTEDJqQpMRFZDifU2JlTJKvTKfOVY
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: Content-Type: text/html; charset=us-ascii
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: 
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: <h3>Verify Your Email</h3>
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER:                          <p>Hi ,</p>
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER:                          <p>Thank you for signing up. Please use the OTP below to verify your email address and activate your account.</p>
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER:                          <h2 style='background: #eee; padding: 10px; display: inline-block; letter-spacing: 5px;'>893456</h2>
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER:                          <p>This code expires in 10 minutes.</p>
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER:                          <p>Or click here: <a href='http://localhost:8080/auth/verify_otp.php?email=ruchitdoshi98@gmail.com'>Verify Account</a></p>
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: 
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: 
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: --b1=_7SCDy3IAWCLx3TbTEDJqQpMRFZDifU2JlTJKvTKfOVY--
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: 
+
+[2026-01-03T12:26:14+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: .
+
+[2026-01-03T12:26:15+01:00] [HRMS MAIL DEBUG][2] SERVER -> CLIENT: 250 2.0.0 OK  1767439439 98e67ed59e1d1-34f4503a764sm1010259a91.1 - gsmtp
+
+[2026-01-03T12:26:15+01:00] [HRMS MAIL DEBUG][1] CLIENT -> SERVER: QUIT
+
+[2026-01-03T12:26:15+01:00] [HRMS MAIL DEBUG][2] SERVER -> CLIENT: 221 2.0.0 closing connection 98e67ed59e1d1-34f4503a764sm1010259a91.1 - gsmtp
+
+[2026-01-03T12:26:15+01:00] [HRMS MAIL] Sent OK to: ruchitdoshi98@gmail.com | subject: Verify Your Email - Dayflow HRMS

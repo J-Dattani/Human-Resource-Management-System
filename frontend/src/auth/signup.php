@@ -1,4 +1,90 @@
-<?php $pageTitle = 'Sign Up - Dayflow HRMS';
+<?php
+session_start();
+include '../config/db.php';
+include '../config/mail.php';
+
+$error = '';
+$success = '';
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $companyName = mysqli_real_escape_string($conn, $_POST['company_name']);
+    $fullName = mysqli_real_escape_string($conn, $_POST['full_name']);
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $phone = mysqli_real_escape_string($conn, $_POST['phone']);
+    $password = $_POST['password'];
+    $confirmPassword = $_POST['confirm_password'];
+
+    // Validation
+    if ($password !== $confirmPassword) {
+        $error = "Passwords do not match.";
+    } else {
+        // Check if email exists
+        $checkEmail = mysqli_query($conn, "SELECT user_id FROM users WHERE email='$email'");
+        if (mysqli_num_rows($checkEmail) > 0) {
+            $error = "Email already registered.";
+        } else {
+            // Get Employee Role ID (Seed if missing)
+            $roleQuery = mysqli_query($conn, "SELECT role_id FROM roles WHERE role_name='Employee'");
+            if (mysqli_num_rows($roleQuery) > 0) {
+                $roleRow = mysqli_fetch_assoc($roleQuery);
+                $roleId = $roleRow['role_id'];
+            } else {
+                mysqli_query($conn, "INSERT INTO roles (role_name) VALUES ('Employee')");
+                $roleId = mysqli_insert_id($conn);
+                // Also ensure Admin role exists for future
+                mysqli_query($conn, "INSERT INTO roles (role_name) VALUES ('Admin')");
+            }
+
+            // Insert User (Inactive)
+            // Using password_hash for security as requested
+            $hashedPwd = password_hash($password, PASSWORD_DEFAULT);
+            $sqlUser = "INSERT INTO users (role_id, email, password, status) VALUES ('$roleId', '$email', '$hashedPwd', 'Inactive')";
+
+            if (mysqli_query($conn, $sqlUser)) {
+                $userId = mysqli_insert_id($conn);
+
+                // Split Name
+                $parts = explode(" ", $fullName);
+                $lastName = array_pop($parts);
+                $firstName = implode(" ", $parts);
+
+                // Generate Emp Code
+                $empCode = "EMP" . str_pad($userId, 4, "0", STR_PAD_LEFT);
+                $date = date('Y-m-d');
+
+                // Insert Employee
+                $sqlEmp = "INSERT INTO employees (user_id, emp_code, first_name, last_name, phone, join_date) 
+                           VALUES ('$userId', '$empCode', '$firstName', '$lastName', '$phone', '$date')";
+                mysqli_query($conn, $sqlEmp);
+
+                // Generate OTP
+                $otp = rand(100000, 999999);
+                $expiresAt = date('Y-m-d H:i:s', strtotime('+10 minutes'));
+
+                $sqlOtp = "INSERT INTO otp_verifications (email, otp_code, expires_at) VALUES ('$email', '$otp', '$expiresAt')";
+                mysqli_query($conn, $sqlOtp);
+
+                // Send OTP Email
+                $subject = "Verify Your Email - Dayflow HRMS";
+                $body = "<h3>Verify Your Email</h3>
+                         <p>Hi $firstName,</p>
+                         <p>Thank you for signing up. Please use the OTP below to verify your email address and activate your account.</p>
+                         <h2 style='background: #eee; padding: 10px; display: inline-block; letter-spacing: 5px;'>$otp</h2>
+                         <p>This code expires in 10 minutes.</p>
+                         <p>Or click here: <a href='http://localhost:8080/auth/verify_otp.php?email=$email'>Verify Account</a></p>";
+
+                sendMail($email, $subject, $body);
+
+                $success = "Account created! OTP sent to your email. Redirecting to verification...";
+                echo "<script>setTimeout(function(){ window.location.href = 'verify_otp.php?email=$email'; }, 2000);</script>";
+            } else {
+                $error = "Error creating account: " . mysqli_error($conn);
+            }
+        }
+    }
+}
+
+$pageTitle = 'Sign Up - Dayflow HRMS';
 include '../includes/head.php'; ?>
 
 <body>
@@ -11,34 +97,44 @@ include '../includes/head.php'; ?>
             </div>
 
             <div class="mb-4">
-                <form action="login.php" method="POST">
+                <?php if ($error): ?>
+                    <div class="alert alert-danger py-2 small"><?php echo $error; ?></div>
+                <?php endif; ?>
+                <?php if ($success): ?>
+                    <div class="alert alert-success py-2 small"><?php echo $success; ?></div>
+                <?php endif; ?>
+                <form action="" method="POST">
 
                     <div class="mb-3">
                         <label for="companyName" class="form-label">Company Name</label>
-                        <input type="text" class="form-control" id="companyName" placeholder="Acme Corp" required>
+                        <input type="text" class="form-control" id="companyName" name="company_name"
+                            placeholder="Acme Corp" required>
                     </div>
 
                     <div class="mb-3">
                         <label for="fullName" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="fullName" placeholder="John Doe" required>
+                        <input type="text" class="form-control" id="fullName" name="full_name" placeholder="John Doe"
+                            required>
                     </div>
 
                     <div class="row g-3 mb-3">
                         <div class="col-6">
                             <label for="email" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="email" placeholder="name@company.com" required>
+                            <input type="email" class="form-control" id="email" name="email"
+                                placeholder="name@company.com" required>
                         </div>
                         <div class="col-6">
                             <label for="phone" class="form-label">Phone</label>
-                            <input type="tel" class="form-control" id="phone" placeholder="+1 (555) 000-0000" required>
+                            <input type="tel" class="form-control" id="phone" name="phone"
+                                placeholder="+1 (555) 000-0000" required>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
                         <div class="input-group">
-                            <input type="password" class="form-control" id="password" placeholder="Create a password"
-                                required style="border-right: 0;">
+                            <input type="password" class="form-control" id="password" name="password"
+                                placeholder="Create a password" required style="border-right: 0;">
                             <span class="input-group-text bg-white toggle-password" data-target="password"
                                 style="cursor: pointer; border-left: 0;">
                                 <!-- Icon Show -->
@@ -65,7 +161,7 @@ include '../includes/head.php'; ?>
                     <div class="mb-4">
                         <label for="confirmPassword" class="form-label">Confirm Password</label>
                         <div class="input-group">
-                            <input type="password" class="form-control" id="confirmPassword"
+                            <input type="password" class="form-control" id="confirmPassword" name="confirm_password"
                                 placeholder="Confirm your password" required style="border-right: 0;">
                             <span class="input-group-text bg-white toggle-password" data-target="confirmPassword"
                                 style="cursor: pointer; border-left: 0;">

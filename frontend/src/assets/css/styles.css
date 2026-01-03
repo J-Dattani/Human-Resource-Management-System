@@ -505,3 +505,30 @@ h4 {
 .border-danger-subtle {
     border-color: #FECACA !important;
 }
+
+/* ---------------------------------------------------------
+   AUTHENTICATION PAGES
+   --------------------------------------------------------- */
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-page);
+    padding: var(--space-4);
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 400px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    padding: 32px;
+}
+
+/* Adjust for Signup which is wider */
+.auth-card[style*="max-width: 500px"] {
+    max-width: 500px;
+}

@@ -1,4 +1,19 @@
-<?php $pageTitle = 'Logged Out - Dayflow HRMS';
+<?php
+session_start();
+include '../config/db.php';
+
+// Clear remember token from DB and cookie
+if (isset($_SESSION['user_id'])) {
+    $uid = $_SESSION['user_id'];
+    mysqli_query($conn, "DELETE FROM remember_tokens WHERE user_id='$uid'");
+}
+if (isset($_COOKIE['remember_token'])) {
+    setcookie('remember_token', '', time() - 3600, "/", "", false, true);
+}
+
+session_unset();
+session_destroy();
+$pageTitle = 'Logged Out - Dayflow HRMS';
 include '../includes/head.php'; ?>
 
 <body>

@@ -1,4 +1,24 @@
-<?php include '../includes/head.php'; ?>
+<?php 
+session_start();
+include '../config/db.php';
+include '../includes/head.php'; 
+
+// Check Auth
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Employee') {
+    header("Location: ../auth/login.php");
+    exit();
+}
+
+$uID = $_SESSION['user_id'];
+$sql = "SELECT e.*, u.email FROM employees e JOIN users u ON e.user_id = u.user_id WHERE e.user_id='$uID'";
+$res = mysqli_query($conn, $sql);
+$emp = mysqli_fetch_assoc($res);
+
+if(!$emp){
+    echo "Profile not found. Contact Admin."; exit;
+}
+$initials = substr($emp['first_name'],0,1) . substr($emp['last_name'],0,1);
+?>
 
 <body>
     <div class="dashboard-wrapper">
@@ -36,26 +56,26 @@
                                     <div class="row g-4">
                                         <div class="col-md-6">
                                             <label class="form-label text-muted small mb-1">First Name</label>
-                                            <input type="text" class="form-control bg-light" value="John" readonly>
+                                            <input type="text" class="form-control bg-light" value="<?php echo $emp['first_name']; ?>" readonly>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label text-muted small mb-1">Last Name</label>
-                                            <input type="text" class="form-control bg-light" value="Doe" readonly>
+                                            <input type="text" class="form-control bg-light" value="<?php echo $emp['last_name']; ?>" readonly>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label text-muted small mb-1">Email Address</label>
                                             <input type="email" class="form-control bg-light"
-                                                value="john.doe@company.com" readonly>
+                                                value="<?php echo $emp['email']; ?>" readonly>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label text-muted small mb-1">Phone Number</label>
-                                            <input type="tel" class="form-control bg-light" value="+1 (555) 123-4567"
+                                            <input type="tel" class="form-control bg-light" value="<?php echo $emp['phone']; ?>"
                                                 readonly>
                                         </div>
                                         <div class="col-12">
                                             <label class="form-label text-muted small mb-1">Address</label>
                                             <textarea class="form-control bg-light" rows="2"
-                                                readonly>123 Tech Park, Innovation Way, Silicon Valley, CA</textarea>
+                                                readonly>Address not on file (Contact HR)</textarea>
                                         </div>
                                     </div>
                                 </form>
@@ -72,19 +92,19 @@
                                 <div class="row g-4">
                                     <div class="col-md-6">
                                         <label class="text-muted small d-block mb-1">Employee ID</label>
-                                        <span class="fw-bold text-dark">EMP-001</span>
+                                        <span class="fw-bold text-dark"><?php echo $emp['emp_code']; ?></span>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="text-muted small d-block mb-1">Department</label>
-                                        <span class="fw-bold text-dark">Engineering</span>
+                                        <span class="fw-bold text-dark"><?php echo $emp['department']; ?></span>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="text-muted small d-block mb-1">Designation</label>
-                                        <span class="fw-bold text-dark">Senior Developer</span>
+                                        <span class="fw-bold text-dark"><?php echo $emp['designation']; ?></span>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="text-muted small d-block mb-1">Joining Date</label>
-                                        <span class="fw-bold text-dark">Jan 10, 2024</span>
+                                        <span class="fw-bold text-dark"><?php echo date('M d, Y', strtotime($emp['join_date'])); ?></span>
                                     </div>
                                 </div>
                             </div>
@@ -98,11 +118,11 @@
                                 <div class="mb-4">
                                     <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center text-primary"
                                         style="width: 100px; height: 100px;">
-                                        <span class="display-6 fw-bold">JD</span>
+                                        <span class="display-6 fw-bold"><?php echo $initials; ?></span>
                                     </div>
                                 </div>
-                                <h5 class="mb-1 text-dark fw-bold">John Doe</h5>
-                                <p class="text-muted small mb-4">Senior Developer • Engineering</p>
+                                <h5 class="mb-1 text-dark fw-bold"><?php echo $emp['first_name'] . ' ' . $emp['last_name']; ?></h5>
+                                <p class="text-muted small mb-4"><?php echo $emp['designation']; ?> • <?php echo $emp['department']; ?></p>
 
                                 <div class="d-grid gap-3">
                                     <button class="btn btn-outline-secondary" disabled>Edit Profile <span

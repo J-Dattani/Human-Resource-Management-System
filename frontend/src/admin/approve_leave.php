@@ -1,4 +1,61 @@
-<?php include '../includes/head.php'; ?>
+<?php
+session_start();
+include '../config/db.php';
+include '../config/mail.php';
+include '../includes/head.php';
+
+// Check Auth
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
+    header("Location: ../auth/login.php");
+    exit();
+}
+
+$message = "";
+$error = "";
+
+// Handle Actions
+if (isset($_POST['action']) && isset($_POST['request_id'])) {
+    $req_id = mysqli_real_escape_string($conn, $_POST['request_id']);
+    $action = $_POST['action'];
+    $status = ($action == 'approve') ? 'Approved' : 'Rejected';
+
+    $updateQ = "UPDATE leave_requests SET status='$status' WHERE leave_id='$req_id'";
+    if (mysqli_query($conn, $updateQ)) {
+        $message = "Request $status successfully.";
+        
+        // Send Email Notification to Employee
+        $leaveInfoQ = mysqli_query($conn, "SELECT lr.*, e.first_name, u.email 
+                                           FROM leave_requests lr 
+                                           JOIN employees e ON lr.emp_id = e.emp_id 
+                                           JOIN users u ON e.user_id = u.user_id 
+                                           WHERE lr.leave_id='$req_id'");
+        if (mysqli_num_rows($leaveInfoQ) > 0) {
+            $leaveInfo = mysqli_fetch_assoc($leaveInfoQ);
+            $empEmail = $leaveInfo['email'];
+            $empName = $leaveInfo['first_name'];
+            $fromDate = date('M d, Y', strtotime($leaveInfo['from_date']));
+            $toDate = date('M d, Y', strtotime($leaveInfo['to_date']));
+            
+            $subject = "Leave Request $status - Dayflow HRMS";
+            $statusColor = ($status == 'Approved') ? '#28a745' : '#dc3545';
+            $body = "<h3>Leave Request Update</h3>
+                     <p>Hi $empName,</p>
+                     <p>Your leave request has been <strong style='color: $statusColor;'>$status</strong>.</p>
+                     <p><b>From:</b> $fromDate<br><b>To:</b> $toDate</p>
+                     <p>If you have any questions, please contact HR.</p>
+                     <p>Best regards,<br>Dayflow HRMS</p>";
+            
+            sendMail($empEmail, $subject, $body);
+        }
+    } else {
+        $error = "Error updating request.";
+    }
+}
+
+// Fetch Counts
+$pendingQ = mysqli_query($conn, "SELECT COUNT(*) as count FROM leave_requests WHERE status='Pending'");
+$pendingCount = mysqli_fetch_assoc($pendingQ)['count'];
+?>
 
 <body>
     <div class="dashboard-wrapper">
@@ -37,7 +94,14 @@
                 <div class="card border-0 mb-4">
                     <div class="card-header">
                         <h3 class="card-title">Pending Requests <span
-                                class="badge badge-pill bg-orange-light text-warning ms-2">2 New</span></h3>
+                                class="badge badge-pill bg-orange-light text-warning ms-2"><?php echo $pendingCount; ?>
+                                New</span></h3>
+                        <?php if ($message): ?>
+                            <div class="alert alert-success py-1 px-2 small mt-2 d-inline-block"><?php echo $message; ?>
+                            </div><?php endif; ?>
+                        <?php if ($error): ?>
+                            <div class="alert alert-danger py-1 px-2 small mt-2 d-inline-block"><?php echo $error; ?></div>
+                        <?php endif; ?>
                     </div>
                     <div class="table-responsive">
                         <table class="modern-table">
@@ -51,78 +115,74 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="ps-4">
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-initial bg-blue-light text-primary me-2">JD</div>
-                                            <div>
-                                                <div class="fw-medium text-dark">John Doe</div>
-                                                <div class="small text-muted">EMP-001</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td><span class="badge badge-pill bg-purple-light text-primary">Paid Leave</span>
-                                    </td>
-                                    <td>
-                                        <div class="text-dark small fw-medium">Oct 20 - Oct 22</div>
-                                        <div class="text-muted small">2 Days</div>
-                                    </td>
-                                    <td class="text-muted small" style="max-width: 250px;">Family vacation planned
-                                        months ago.</td>
-                                    <td class="text-end pe-4">
-                                        <div class="btn-group">
-                                            <button class="btn btn-light btn-sm text-success" title="Approve">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2" d="M5 13l4 4L19 7" />
-                                                </svg>
-                                            </button>
-                                            <button class="btn btn-light btn-sm text-danger" title="Reject">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="ps-4">
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-initial bg-purple-light text-primary me-2">JS</div>
-                                            <div>
-                                                <div class="fw-medium text-dark">Jane Smith</div>
-                                                <div class="small text-muted">EMP-002</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td><span class="badge badge-pill bg-blue-light text-primary">Sick Leave</span></td>
-                                    <td>
-                                        <div class="text-dark small fw-medium">Oct 24</div>
-                                        <div class="text-muted small">1 Day</div>
-                                    </td>
-                                    <td class="text-muted small" style="max-width: 250px;">Not feeling well today.</td>
-                                    <td class="text-end pe-4">
-                                        <div class="btn-group">
-                                            <button class="btn btn-light btn-sm text-success" title="Approve">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2" d="M5 13l4 4L19 7" />
-                                                </svg>
-                                            </button>
-                                            <button class="btn btn-light btn-sm text-danger" title="Reject">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                <?php
+                                $pendListQ = mysqli_query($conn, "SELECT lr.*, e.first_name, e.last_name, e.emp_code, lt.leave_name 
+                                                                  FROM leave_requests lr 
+                                                                  JOIN employees e ON lr.emp_id=e.emp_id 
+                                                                  JOIN leave_types lt ON lr.leave_type_id=lt.leave_type_id 
+                                                                  WHERE lr.status='Pending' ORDER BY lr.applied_at ASC");
+                                if (mysqli_num_rows($pendListQ) > 0) {
+                                    while ($row = mysqli_fetch_assoc($pendListQ)) {
+                                        $initials = substr($row['first_name'], 0, 1) . substr($row['last_name'], 0, 1);
+                                        $days = (strtotime($row['to_date']) - strtotime($row['from_date'])) / (60 * 60 * 24) + 1;
+                                        $dateRange = date('M d', strtotime($row['from_date'])) . ' - ' . date('M d', strtotime($row['to_date']));
+                                        ?>
+                                        <tr>
+                                            <td class="ps-4">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-initial bg-blue-light text-primary me-2">
+                                                        <?php echo $initials; ?>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-medium text-dark">
+                                                            <?php echo $row['first_name'] . ' ' . $row['last_name']; ?>
+                                                        </div>
+                                                        <div class="small text-muted"><?php echo $row['emp_code']; ?></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill bg-purple-light text-primary"><?php echo $row['leave_name']; ?></span>
+                                            </td>
+                                            <td>
+                                                <div class="text-dark small fw-medium"><?php echo $dateRange; ?></div>
+                                                <div class="text-muted small"><?php echo round($days); ?> Days</div>
+                                            </td>
+                                            <td class="text-muted small" style="max-width: 250px;"><?php echo $row['reason']; ?>
+                                            </td>
+                                            <td class="text-end pe-4">
+                                                <form action="" method="POST" class="d-inline">
+                                                    <input type="hidden" name="request_id"
+                                                        value="<?php echo $row['leave_id']; ?>">
+                                                    <button type="submit" name="action" value="approve"
+                                                        class="btn btn-light btn-sm text-success" title="Approve">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2" d="M5 13l4 4L19 7" />
+                                                        </svg>
+                                                    </button>
+                                                </form>
+                                                <form action="" method="POST" class="d-inline">
+                                                    <input type="hidden" name="request_id"
+                                                        value="<?php echo $row['leave_id']; ?>">
+                                                    <button type="submit" name="action" value="reject"
+                                                        class="btn btn-light btn-sm text-danger" title="Reject">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='5' class='text-center py-4 text-muted'>No pending requests.</td></tr>";
+                                }
+                                ?>
                             </tbody>
                         </table>
                     </div>
@@ -132,15 +192,49 @@
                     <div class="card-header">
                         <h3 class="card-title">Approval History</h3>
                     </div>
-                    <div class="card-body text-center py-5">
-                        <div class="mb-3 text-muted" style="opacity: 0.5;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                    <div class="card-body py-0"> <!-- Removed text-center py-5 -->
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="ps-4 py-3">Employee</th>
+                                        <th>Leave Type</th>
+                                        <th>Duration</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $histQ = mysqli_query($conn, "SELECT lr.*, e.first_name, e.last_name, lt.leave_name 
+                                                      FROM leave_requests lr 
+                                                      JOIN employees e ON lr.emp_id=e.emp_id 
+                                                      JOIN leave_types lt ON lr.leave_type_id=lt.leave_type_id 
+                                                      WHERE lr.status!='Pending' ORDER BY lr.applied_at DESC LIMIT 10");
+                                    if (mysqli_num_rows($histQ) > 0) {
+                                        while ($row = mysqli_fetch_assoc($histQ)) {
+                                            $dateRange = date('M d', strtotime($row['from_date'])) . ' - ' . date('M d', strtotime($row['to_date']));
+                                            $statusClass = 'text-success';
+                                            if ($row['status'] == 'Rejected')
+                                                $statusClass = 'text-danger';
+                                            ?>
+                                            <tr>
+                                                <td class="ps-4 py-3 fw-medium">
+                                                    <?php echo $row['first_name'] . ' ' . $row['last_name']; ?>
+                                                </td>
+                                                <td><?php echo $row['leave_name']; ?></td>
+                                                <td><?php echo $dateRange; ?></td>
+                                                <td class="<?php echo $statusClass; ?> fw-bold"><?php echo $row['status']; ?>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                        }
+                                    } else {
+                                        echo "<tr><td colspan='4' class='text-center py-4 text-muted'>No history found.</td></tr>";
+                                    }
+                                    ?>
+                                </tbody>
+                            </table>
                         </div>
-                        <p class="text-muted small mb-0">No past leave requests found this month.</p>
                     </div>
                 </div>
 
